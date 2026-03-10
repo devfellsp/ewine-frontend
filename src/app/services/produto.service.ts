@@ -19,4 +19,16 @@ export class ProdutoService {
   findById(id: number): Observable<Produto> {
     return this.httpClient.get<Produto>(`${this.api}/${id}`);
   }
+
+  create(produto: Produto): Observable<Produto> {
+    return this.httpClient.post<Produto>(`${this.api}/vinhos`, produto);
+  }
+
+  update(id: number, produto: Produto): Observable<Produto> {
+    return this.httpClient.put<Produto>(`${this.api}/${id}/vinhos`, produto);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.api}/${id}`);
+  }
 }

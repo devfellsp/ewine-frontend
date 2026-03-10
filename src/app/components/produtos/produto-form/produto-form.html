@@ -1,1 +1,198 @@
-<p>produto-form works!</p>
+<div class="page-container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <mat-icon>wine_bar</mat-icon>
+      <span>E-Wine</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" routerLink="/produtos">
+        <mat-icon>inventory_2</mat-icon>
+        Produtos
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="cancelar()">
+        <mat-icon>logout</mat-icon>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <div class="page-header">
+      <button mat-icon-button class="back-btn" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1>{{ editando ? '✏️ Editar Produto' : '🍷 Novo Produto' }}</h1>
+        <p>{{ editando ? 'Atualize as informações do vinho' : 'Cadastre um novo vinho no catálogo' }}</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+
+      <!-- INFORMAÇÕES BÁSICAS -->
+      <p class="section-title">Informações Básicas</p>
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>SKU</mat-label>
+          <input matInput [(ngModel)]="dto.sku" placeholder="Ex: VIN-MIO-CS-2020-750">
+          <mat-icon matSuffix>qr_code</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome do Vinho</mat-label>
+          <input matInput [(ngModel)]="dto.nome" placeholder="Ex: Miolo Reserva">
+          <mat-icon matSuffix>wine_bar</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descrição</mat-label>
+        <textarea matInput [(ngModel)]="dto.descricao" rows="3"
+                  placeholder="Descreva o vinho..."></textarea>
+      </mat-form-field>
+
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Preço</mat-label>
+          <input matInput type="number" [(ngModel)]="dto.preco">
+          <span matPrefix>R$&nbsp;</span>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Estoque</mat-label>
+          <input matInput type="number" [(ngModel)]="dto.quantEstoque">
+          <span matSuffix>un.</span>
+        </mat-form-field>
+      </div>
+
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Teor Alcoólico (%)</mat-label>
+          <input matInput type="number" [(ngModel)]="dto.teorAlcoolico" placeholder="Ex: 13.5">
+          <span matSuffix>%</span>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Volume (ml)</mat-label>
+          <input matInput type="number" [(ngModel)]="dto.volume" placeholder="Ex: 750">
+          <span matSuffix>ml</span>
+        </mat-form-field>
+      </div>
+
+      <!-- CLASSIFICAÇÃO -->
+      <p class="section-title" style="margin-top: 8px;">Classificação</p>
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tipo de Vinho</mat-label>
+          <mat-select [(ngModel)]="dto.tipoVinho.id">
+            <mat-option [value]="1">🍷 Tinto</mat-option>
+            <mat-option [value]="2">🥂 Branco</mat-option>
+            <mat-option [value]="3">🌸 Rosé</mat-option>
+            <mat-option [value]="4">✨ Espumante</mat-option>
+            <mat-option [value]="5">🍯 Fortificado</mat-option>
+            <mat-option [value]="6">🍰 Sobremesa</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>País de Origem</mat-label>
+          <mat-select [(ngModel)]="dto.pais.id">
+            <mat-option [value]="1">🇧🇷 Brasil</mat-option>
+            <mat-option [value]="2">🇫🇷 França</mat-option>
+            <mat-option [value]="3">🇮🇹 Itália</mat-option>
+            <mat-option [value]="4">🇪🇸 Espanha</mat-option>
+            <mat-option [value]="5">🇵🇹 Portugal</mat-option>
+            <mat-option [value]="6">🇨🇱 Chile</mat-option>
+            <mat-option [value]="7">🇦🇷 Argentina</mat-option>
+            <mat-option [value]="8">🇺🇸 Estados Unidos</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Safra</mat-label>
+          <mat-select [(ngModel)]="dto.safra.id">
+            <mat-option [value]="1">2020</mat-option>
+            <mat-option [value]="2">2019</mat-option>
+            <mat-option [value]="3">2018</mat-option>
+            <mat-option [value]="4">2017</mat-option>
+            <mat-option [value]="5">2016</mat-option>
+            <mat-option [value]="6">2015</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Marca</mat-label>
+          <mat-select [(ngModel)]="dto.marca.id">
+            <mat-option [value]="1">Miolo</mat-option>
+            <mat-option [value]="2">Casa Valduga</mat-option>
+            <mat-option [value]="3">Salton</mat-option>
+            <mat-option [value]="4">Château Margaux</mat-option>
+            <mat-option [value]="5">Antinori</mat-option>
+            <mat-option [value]="6">Concha y Toro</mat-option>
+            <mat-option [value]="7">Catena Zapata</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Estilo</mat-label>
+          <mat-select [(ngModel)]="dto.estilo.id">
+            <mat-option [value]="1">Seco</mat-option>
+            <mat-option [value]="2">Suave</mat-option>
+            <mat-option [value]="3">Meio Seco</mat-option>
+            <mat-option [value]="4">Doce</mat-option>
+            <mat-option [value]="5">Frisante</mat-option>
+            <mat-option [value]="6">Espumante</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ocasião</mat-label>
+          <mat-select [(ngModel)]="dto.ocasiao.id">
+            <mat-option [value]="1">🕯️ Jantar Romântico</mat-option>
+            <mat-option [value]="2">🔥 Churrasco</mat-option>
+            <mat-option [value]="3">🎉 Confraternização</mat-option>
+            <mat-option [value]="4">🥂 Celebração</mat-option>
+            <mat-option [value]="5">👃 Degustação</mat-option>
+            <mat-option [value]="6">🍽️ Harmonização</mat-option>
+            <mat-option [value]="7">🎁 Presente</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Uva Principal</mat-label>
+          <mat-select [(ngModel)]="uvaId">
+            <mat-option [value]="1">Cabernet Sauvignon</mat-option>
+            <mat-option [value]="2">Merlot</mat-option>
+            <mat-option [value]="3">Tannat</mat-option>
+            <mat-option [value]="4">Malbec</mat-option>
+            <mat-option [value]="5">Chardonnay</mat-option>
+            <mat-option [value]="6">Sauvignon Blanc</mat-option>
+            <mat-option [value]="7">Pinot Noir</mat-option>
+            <mat-option [value]="8">Moscato</mat-option>
+            <mat-option [value]="9">Riesling</mat-option>
+            <mat-option [value]="10">Tempranillo</mat-option>
+            <mat-option [value]="11">Syrah</mat-option>
+            <mat-option [value]="12">Sangiovese</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="form-actions">
+        <button mat-stroked-button class="btn-cancelar" (click)="cancelar()">
+          <mat-icon>close</mat-icon> Cancelar
+        </button>
+        <button mat-raised-button class="btn-salvar" (click)="salvar()">
+          <mat-icon>save</mat-icon> Salvar Produto
+        </button>
+      </div>
+
+    </div>
+  </main>
+</div>

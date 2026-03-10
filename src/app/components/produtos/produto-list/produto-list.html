@@ -1,44 +1,139 @@
-<mat-toolbar color="primary">
-  <span>🍷 E-Wine — Produtos</span>
-  <span style="flex: 1;"></span>
-  <button mat-raised-button routerLink="/produtos/new">
-    <mat-icon>add</mat-icon> Novo Produto
-  </button>
-</mat-toolbar>
+<div class="page-container">
 
-<div style="padding: 20px;">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <mat-icon>wine_bar</mat-icon>
+      <span>E-Wine</span>
+    </div>
 
-  <mat-form-field appearance="outline" style="width: 100%;">
-    <mat-label>Pesquisar</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Digite o nome do produto...">
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
+    <nav class="sidebar-nav">
+      <a class="nav-item active">
+        <mat-icon>inventory_2</mat-icon>
+        Produtos
+      </a>
+    </nav>
 
-  <table mat-table [dataSource]="dataSource" style="width: 100%;">
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Sair
+      </button>
+    </div>
+  </aside>
 
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef>#</th>
-      <td mat-cell *matCellDef="let p">{{ p.id }}</td>
-    </ng-container>
+  <!-- MAIN -->
+  <main class="main-content">
 
-    <ng-container matColumnDef="nome">
-      <th mat-header-cell *matHeaderCellDef>Nome</th>
-      <td mat-cell *matCellDef="let p">{{ p.nome }}</td>
-    </ng-container>
+    <!-- HEADER -->
+    <div class="page-header">
+      <div class="page-title">
+        <h1>🍷 Produtos</h1>
+        <p>Gerencie o catálogo de vinhos</p>
+      </div>
+      <button mat-raised-button class="btn-novo" routerLink="/produtos/new">
+        <mat-icon>add</mat-icon> Novo Produto
+      </button>
+    </div>
 
-    <ng-container matColumnDef="preco">
-      <th mat-header-cell *matHeaderCellDef>Preço</th>
-      <td mat-cell *matCellDef="let p">{{ p.preco | currency:'BRL' }}</td>
-    </ng-container>
+    <!-- STATS CARDS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon wine">
+          <mat-icon>wine_bar</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span>Total de Produtos</span>
+          <strong>{{ dataSource.data.length }}</strong>
+        </div>
+      </div>
 
-    <ng-container matColumnDef="estoque">
-      <th mat-header-cell *matHeaderCellDef>Estoque</th>
-      <td mat-cell *matCellDef="let p">{{ p.estoque }}</td>
-    </ng-container>
+      <div class="stat-card">
+        <div class="stat-icon stock">
+          <mat-icon>inventory</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span>Produtos Ativos</span>
+          <strong>{{ produtosAtivos }}</strong>
+        </div>
+      </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <div class="stat-card">
+        <div class="stat-icon price">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span>Preço Médio</span>
+          <strong>{{ precoMedio | currency:'BRL' }}</strong>
+        </div>
+      </div>
+    </div>
 
-  </table>
+    <!-- TABLE CARD -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Pesquisar produto...</mat-label>
+          <input matInput (keyup)="applyFilter($event)">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
 
+      <table mat-table [dataSource]="dataSource" style="width: 100%;">
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let p">{{ p.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="nome">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let p" class="nome-cell">{{ p.nome }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="preco">
+          <th mat-header-cell *matHeaderCellDef>Preço</th>
+          <td mat-cell *matCellDef="let p" class="preco-cell">{{ p.preco | currency:'BRL' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estoque">
+          <th mat-header-cell *matHeaderCellDef>Estoque</th>
+          <td mat-cell *matCellDef="let p">{{ p.estoque?.quantidade ?? 0 }} un.</td>
+        </ng-container>
+
+        <ng-container matColumnDef="ativo">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let p">
+            <span [class]="p.ativo ? 'badge-ativo' : 'badge-inativo'">
+              {{ p.ativo ? '● Ativo' : '● Inativo' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let p">
+            <button mat-icon-button color="primary" (click)="editar(p.id)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="excluir(p)" matTooltip="Excluir">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-state" colspan="6">
+            <mat-icon>search_off</mat-icon>
+            <p>Nenhum produto encontrado</p>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+
+  </main>
 </div>

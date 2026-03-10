@@ -1,0 +1,164 @@
+.page-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f0f7;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #6a0032 0%, #a0005a 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: fixed;
+  height: 100vh;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.sidebar-logo span {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.sidebar-nav {
+  padding: 16px 0;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 0 24px 24px 0;
+  margin-right: 16px;
+  transition: background 0.2s;
+  font-size: 15px;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: rgba(255,255,255,0.25);
+  color: white;
+  font-weight: 600;
+}
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  width: 100%;
+}
+
+.logout-btn:hover { color: white; }
+
+/* ===== MAIN ===== */
+.main-content {
+  margin-left: 240px;
+  flex: 1;
+  padding: 32px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.back-btn {
+  color: #6a0032 !important;
+}
+
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #3d001a;
+  margin: 0;
+}
+
+.page-header p {
+  color: #888;
+  margin: 4px 0 0 0;
+  font-size: 14px;
+}
+
+/* ===== FORM CARD ===== */
+.form-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 32px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #a0005a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #fde8f0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-divider {
+  margin: 8px 0 24px 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-cancelar {
+  border-radius: 10px !important;
+  color: #666 !important;
+}
+
+.btn-salvar {
+  background: linear-gradient(135deg, #a0005a, #6a0032) !important;
+  color: white !important;
+  border-radius: 10px !important;
+  padding: 0 24px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 15px rgba(106,0,50,0.3) !important;
+}
