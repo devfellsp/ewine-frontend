@@ -1,0 +1,151 @@
+<div class="detalhe-container">
+
+  <!-- HEADER -->
+  <header class="detalhe-header">
+    <button mat-icon-button (click)="voltar()" class="btn-voltar">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-brand">
+      <mat-icon>wine_bar</mat-icon>
+      E-Wine
+    </div>
+  </header>
+
+  @if (loading) {
+    <div class="loading-center">
+      <div class="skeleton-detalhe">
+        <div class="sk-img"></div>
+        <div class="sk-body">
+          <div class="sk-line xl"></div>
+          <div class="sk-line md"></div>
+          <div class="sk-line sm"></div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!loading && produto) {
+    <main class="detalhe-content">
+
+      <!-- IMAGEM -->
+      <div class="produto-img">
+        <div class="img-placeholder">
+          <mat-icon class="wine-big">wine_bar</mat-icon>
+        </div>
+        <div class="img-badge">{{ produto.tipoVinho?.nome ?? 'Vinho' }}</div>
+      </div>
+
+      <!-- INFO -->
+      <div class="produto-info">
+
+        <div class="info-top">
+          <span class="marca-tag">{{ produto.marca?.nome ?? '' }}</span>
+          <h1>{{ produto.nome }}</h1>
+          <p class="descricao">{{ produto.descricao || 'Vinho premium selecionado especialmente para você.' }}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- DETALHES -->
+        <div class="detalhes-grid">
+          @if (produto.paisDeOrigem) {
+            <div class="detalhe-item">
+              <mat-icon>public</mat-icon>
+              <div>
+                <span class="label">País de Origem</span>
+                <span class="valor">{{ produto.paisDeOrigem.nome }}</span>
+              </div>
+            </div>
+          }
+          @if (produto.teorAlcoolico) {
+            <div class="detalhe-item">
+              <mat-icon>opacity</mat-icon>
+              <div>
+                <span class="label">Teor Alcoólico</span>
+                <span class="valor">{{ produto.teorAlcoolico }}%</span>
+              </div>
+            </div>
+          }
+          @if (produto.volume) {
+            <div class="detalhe-item">
+              <mat-icon>water_drop</mat-icon>
+              <div>
+                <span class="label">Volume</span>
+                <span class="valor">{{ produto.volume }}ml</span>
+              </div>
+            </div>
+          }
+          @if (produto.safra) {
+            <div class="detalhe-item">
+              <mat-icon>calendar_today</mat-icon>
+              <div>
+                <span class="label">Safra</span>
+                <span class="valor">{{ produto.safra.ano }}</span>
+              </div>
+            </div>
+          }
+          @if (produto.estilo) {
+            <div class="detalhe-item">
+              <mat-icon>style</mat-icon>
+              <div>
+                <span class="label">Estilo</span>
+                <span class="valor">{{ produto.estilo.nome }}</span>
+              </div>
+            </div>
+          }
+          @if (produto.ocasiao) {
+            <div class="detalhe-item">
+              <mat-icon>celebration</mat-icon>
+              <div>
+                <span class="label">Ocasião</span>
+                <span class="valor">{{ produto.ocasiao.nome }}</span>
+              </div>
+            </div>
+          }
+          <div class="detalhe-item">
+            <mat-icon>inventory_2</mat-icon>
+            <div>
+              <span class="label">Estoque</span>
+              <span class="valor">{{ produto.quantEstoque }} unidades</span>
+            </div>
+          </div>
+        </div>
+
+        @if (produto.uvas && produto.uvas.length > 0) {
+          <div class="uvas-section">
+            <span class="label">Uvas</span>
+            <div class="uvas-chips">
+              @for (uva of produto.uvas; track uva.id) {
+                <span class="uva-chip">🍇 {{ uva.nome }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        <mat-divider></mat-divider>
+
+        <!-- COMPRA -->
+        <div class="compra-section">
+          <span class="preco">{{ produto.preco | currency:'BRL' }}</span>
+
+          <div class="quantidade-control">
+            <button mat-icon-button (click)="diminuir()" [disabled]="quantidade <= 1">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="qtd">{{ quantidade }}</span>
+            <button mat-icon-button (click)="aumentar()" [disabled]="quantidade >= produto.quantEstoque">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <button mat-raised-button class="btn-comprar" (click)="adicionarCarrinho()">
+            <mat-icon>add_shopping_cart</mat-icon>
+            Adicionar ao Carrinho
+          </button>
+        </div>
+
+      </div>
+    </main>
+  }
+
+</div>
