@@ -15,26 +15,41 @@ export class AuthService {
   login(credenciais: Login): Observable<HttpResponse<string>> {
     return this.httpClient.post(this.api, credenciais, {
       observe: 'response',
-      responseType: 'text'
+      responseType: 'text',
+      withCredentials: true   // ✅ recebe e envia o cookie automaticamente
     }).pipe(
       tap((response: HttpResponse<string>) => {
-        const token = response.body;
-        if (token) {
-          localStorage.setItem('token', token);
+        const perfil = response.body; // ✅ agora o body retorna só o perfil
+        if (perfil) {
+          localStorage.setItem('perfil', perfil); // perfil não é sensível
         }
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    // ✅ chama o backend para apagar o cookie
+    this.httpClient.post(`${this.api}/logout`, {}, {
+      withCredentials: true
+    }).subscribe();
+    localStorage.removeItem('perfil');
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
+  getPerfil(): string | null {
+    return localStorage.getItem('perfil');
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    // ✅ verifica pelo perfil já que o token está no cookie HttpOnly
+    return !!this.getPerfil();
+  }
+
+  isAdmin(): boolean {
+    return this.getPerfil() === 'ADMIN';
+  }
+
+  isCliente(): boolean {
+    return this.getPerfil() === 'CLIENTE';
   }
 }
+

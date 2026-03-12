@@ -76,20 +76,38 @@ export class ProdutoForm implements OnInit {
   salvar(): void {
     this.dto.uvas = [{ id: this.uvaId }];
 
+    console.log('DTO enviado:', JSON.stringify(this.dto, null, 2));
+    console.log('ID do produto:', this.produtoId);
+    console.log('Editando:', this.editando);
+
     if (this.editando) {
       this.produtoService.update(this.produtoId, this.dto).subscribe({
-        next: () => this.router.navigate(['/produtos']),
-        error: (err) => console.error('Erro ao atualizar:', err)
+        next: (res) => {
+          console.log('Resposta do servidor:', res);
+          this.router.navigate(['/admin/produtos']);
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar:', err);
+          console.error('Status:', err.status);
+          console.error('Body:', err.error);
+        }
       });
     } else {
       this.produtoService.create(this.dto).subscribe({
-        next: () => this.router.navigate(['/produtos']),
-        error: (err) => console.error('Erro ao criar:', err)
+        next: (res) => {
+          console.log('Produto criado:', res);
+          this.router.navigate(['/admin/produtos']);
+        },
+        error: (err) => {
+          console.error('Erro ao criar:', err);
+          console.error('Status:', err.status);
+          console.error('Body:', err.error);
+        }
       });
     }
   }
 
   cancelar(): void {
-    this.router.navigate(['/produtos']);
+    this.router.navigate(['/admin/produtos']);
   }
 }

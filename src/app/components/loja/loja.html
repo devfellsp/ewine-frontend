@@ -1,0 +1,108 @@
+<div class="loja-container">
+
+  <!-- HEADER -->
+  <header class="loja-header">
+    <div class="header-brand">
+      <mat-icon>wine_bar</mat-icon>
+      E-Wine
+    </div>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar vinhos...</mat-label>
+      <input matInput (keyup)="filtrar($event)" [disabled]="loading">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <div class="header-actions">
+      <button mat-icon-button matTooltip="Minha conta">
+        <mat-icon>person</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Meus pedidos">
+        <mat-icon>receipt_long</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Sair" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Os melhores<br><span>vinhos do mundo</span><br>para você 🍷</h1>
+      <p>Curadoria especial de vinhos premium, entregues na sua porta</p>
+      <div class="hero-badges">
+        <div class="badge"><mat-icon>verified</mat-icon> Vinhos Selecionados</div>
+        <div class="badge"><mat-icon>local_shipping</mat-icon> Entrega Rápida</div>
+        <div class="badge"><mat-icon>star</mat-icon> Melhor Preço</div>
+      </div>
+    </div>
+    <mat-icon class="hero-visual">wine_bar</mat-icon>
+  </div>
+
+  <!-- PRODUTOS -->
+  <main class="produtos-section">
+    <div class="section-header">
+      <h2>🍷 Nosso Catálogo</h2>
+      @if (!loading) {
+        <span class="total-badge">{{ produtosFiltrados.length }} vinhos disponíveis</span>
+      }
+    </div>
+
+    <div class="produtos-grid">
+
+      <!-- SKELETON LOADING -->
+      @if (loading) {
+        @for (s of skeletons; track $index) {
+          <div class="produto-card skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="card-body">
+              <div class="skeleton-line largo"></div>
+              <div class="skeleton-line medio"></div>
+              <div class="skeleton-line curto"></div>
+              <div class="skeleton-footer">
+                <div class="skeleton-preco"></div>
+                <div class="skeleton-btn"></div>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- PRODUTOS CARREGADOS -->
+      @if (!loading) {
+        @if (produtosFiltrados.length === 0) {
+          <div class="empty-state">
+            <mat-icon>search_off</mat-icon>
+            <p>Nenhum vinho encontrado</p>
+          </div>
+        }
+
+        @for (produto of produtosFiltrados; track produto.id) {
+          <div class="produto-card" (click)="verDetalhe(produto.id)">
+            <div class="card-img">
+              <span class="card-tipo">Vinho</span>
+              <mat-icon class="wine-icon">wine_bar</mat-icon>
+            </div>
+            <div class="card-body">
+              <h3>{{ produto.nome }}</h3>
+              <p class="descricao">{{ produto.descricao || 'Vinho premium selecionado' }}</p>
+              <div class="card-info">
+                <span class="chip">{{ produto.quantEstoque ?? 0}} un.</span>
+              </div>
+              <div class="card-footer">
+                <span class="preco">{{ produto.preco | currency:'BRL' }}</span>
+                <button mat-raised-button class="btn-comprar" (click)="adicionarCarrinho(produto); $event.stopPropagation()">
+                  <mat-icon>add_shopping_cart</mat-icon>
+                  Comprar
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+    </div>
+  </main>
+
+</div>

@@ -31,34 +31,95 @@
   <!-- LADO DIREITO -->
   <div class="login-right">
     <div class="login-box">
-      <h2>Bem-vindo! 👋</h2>
-      <p>Faça login para acessar o painel</p>
 
-      @if (erro) {
-        <div class="erro-msg">
-          <mat-icon>error_outline</mat-icon>
-          Login ou senha inválidos!
-        </div>
-      }
+      <mat-tab-group animationDuration="0ms" class="login-tabs">
 
-      <div class="form-fields">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Login</mat-label>
-          <input matInput [(ngModel)]="credenciais.login" placeholder="Seu login">
-          <mat-icon matSuffix>person</mat-icon>
-        </mat-form-field>
+        <!-- ABA LOGIN -->
+        <mat-tab label="Entrar">
+          <div class="tab-content">
+            <h2>Bem-vindo! 👋</h2>
+            <p>Faça login para acessar sua conta</p>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Senha</mat-label>
-          <input matInput type="password" [(ngModel)]="credenciais.senha" placeholder="Sua senha"
-                 (keyup.enter)="entrar()">
-          <mat-icon matSuffix>lock</mat-icon>
-        </mat-form-field>
-      </div>
+            @if (erro) {
+              <div class="erro-msg">
+                <mat-icon>error_outline</mat-icon>
+                Login ou senha inválidos!
+              </div>
+            }
 
-      <button mat-raised-button class="btn-login" (click)="entrar()">
-        <mat-icon>login</mat-icon> Entrar
-      </button>
+            <div class="form-fields">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Login</mat-label>
+                <input matInput [(ngModel)]="credenciais.login" placeholder="Seu login">
+                <mat-icon matSuffix>person</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Senha</mat-label>
+                <input matInput type="password" [(ngModel)]="credenciais.senha"
+                       placeholder="Sua senha" (keyup.enter)="entrar()">
+                <mat-icon matSuffix>lock</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <button mat-raised-button class="btn-login" (click)="entrar()">
+              <mat-icon>login</mat-icon> Entrar
+            </button>
+          </div>
+        </mat-tab>
+
+        <!-- ABA CRIAR CONTA -->
+        <mat-tab label="Criar Conta">
+          <div class="tab-content">
+            <h2>Crie sua conta 🍷</h2>
+            <p>Preencha os dados para se cadastrar</p>
+
+            @if (erroCadastro) {
+              <div class="erro-msg">
+                <mat-icon>error_outline</mat-icon>
+                {{ mensagemErro }}
+              </div>
+            }
+
+            <div class="form-fields">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nome completo</mat-label>
+                <input matInput [(ngModel)]="cadastro.nome" placeholder="Seu nome">
+                <mat-icon matSuffix>badge</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Login</mat-label>
+                <input matInput [(ngModel)]="cadastro.login" placeholder="Escolha um login">
+                <mat-icon matSuffix>person</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" [(ngModel)]="cadastro.email" placeholder="seu@email.com">
+                <mat-icon matSuffix>email</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>CPF</mat-label>
+                <input matInput [(ngModel)]="cadastro.cpf" placeholder="000.000.000-00">
+                <mat-icon matSuffix>fingerprint</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Senha</mat-label>
+                <input matInput type="password" [(ngModel)]="cadastro.senha" placeholder="Crie uma senha">
+                <mat-icon matSuffix>lock</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <button mat-raised-button class="btn-login" (click)="criarConta()">
+              <mat-icon>person_add</mat-icon> Criar Conta
+            </button>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
     </div>
   </div>
 

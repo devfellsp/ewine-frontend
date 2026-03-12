@@ -137,3 +137,24 @@
   align-items: center;
   gap: 8px;
 }
+
+.login-tabs {
+  width: 100%;
+}
+
+.tab-content {
+  padding-top: 24px;
+}
+
+.tab-content h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3d001a;
+  margin-bottom: 6px;
+}
+
+.tab-content p {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 20px;
+}

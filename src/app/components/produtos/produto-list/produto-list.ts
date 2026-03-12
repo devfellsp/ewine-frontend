@@ -53,6 +53,7 @@ export class ProdutoList implements OnInit {
 
   carregarProdutos(): void {
     this.produtoService.findAll().subscribe(data => {
+      console.log('Produto recebido:', JSON.stringify(data[0], null, 2));
       this.dataSource.data = data;
     });
   }
@@ -63,7 +64,7 @@ export class ProdutoList implements OnInit {
   }
 
   editar(id: number): void {
-    this.router.navigate(['/produtos/edit', id]);
+    this.router.navigate(['/admin/produtos/edit', id]);
   }
 
   excluir(produto: Produto): void {

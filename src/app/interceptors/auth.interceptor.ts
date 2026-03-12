@@ -1,16 +1,11 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('token');
+  // ✅ Remove o token do localStorage — agora o cookie HttpOnly é enviado automaticamente
+  // ✅ withCredentials garante que o cookie vai junto em todas as requisições
+  const authReq = req.clone({
+    withCredentials: true
+  });
 
-  if (token) {
-    const authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(authReq);
-  }
-
-  return next(req);
+  return next(authReq);
 };
