@@ -1,17 +1,15 @@
 <div class="login-container">
-
-  <!-- LADO ESQUERDO -->
   <div class="login-left">
     <div class="brand">
       <mat-icon>wine_bar</mat-icon>
       <h1>E-Wine</h1>
     </div>
-    <p class="brand-sub">Plataforma de gestão de vinhos premium</p>
+    <p class="brand-sub">Plataforma de gestao de vinhos premium</p>
 
     <div class="features">
       <div class="feature-item">
         <mat-icon>inventory_2</mat-icon>
-        <span>Gestão completa de produtos</span>
+        <span>Gestao completa de produtos</span>
       </div>
       <div class="feature-item">
         <mat-icon>shopping_cart</mat-icon>
@@ -19,31 +17,27 @@
       </div>
       <div class="feature-item">
         <mat-icon>people</mat-icon>
-        <span>Gestão de clientes</span>
+        <span>Gestao de clientes</span>
       </div>
       <div class="feature-item">
         <mat-icon>bar_chart</mat-icon>
-        <span>Relatórios e estatísticas</span>
+        <span>Relatorios e estatisticas</span>
       </div>
     </div>
   </div>
 
-  <!-- LADO DIREITO -->
   <div class="login-right">
     <div class="login-box">
-
       <mat-tab-group animationDuration="0ms" class="login-tabs">
-
-        <!-- ABA LOGIN -->
         <mat-tab label="Entrar">
           <div class="tab-content">
-            <h2>Bem-vindo! 👋</h2>
-            <p>Faça login para acessar sua conta</p>
+            <h2>Bem-vindo!</h2>
+            <p>Faca login para acessar sua conta</p>
 
             @if (erro) {
               <div class="erro-msg">
                 <mat-icon>error_outline</mat-icon>
-                Login ou senha inválidos!
+                {{ mensagemErroLogin || 'Erro ao autenticar.' }}
               </div>
             }
 
@@ -56,8 +50,13 @@
 
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Senha</mat-label>
-                <input matInput type="password" [(ngModel)]="credenciais.senha"
-                       placeholder="Sua senha" (keyup.enter)="entrar()">
+                <input
+                  matInput
+                  type="password"
+                  [(ngModel)]="credenciais.senha"
+                  placeholder="Sua senha"
+                  (keyup.enter)="entrar()"
+                >
                 <mat-icon matSuffix>lock</mat-icon>
               </mat-form-field>
             </div>
@@ -68,10 +67,9 @@
           </div>
         </mat-tab>
 
-        <!-- ABA CRIAR CONTA -->
         <mat-tab label="Criar Conta">
           <div class="tab-content">
-            <h2>Crie sua conta 🍷</h2>
+            <h2>Crie sua conta</h2>
             <p>Preencha os dados para se cadastrar</p>
 
             @if (erroCadastro) {
@@ -118,9 +116,7 @@
             </button>
           </div>
         </mat-tab>
-
       </mat-tab-group>
     </div>
   </div>
-
 </div>
