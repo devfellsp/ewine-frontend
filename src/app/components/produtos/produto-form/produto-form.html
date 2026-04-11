@@ -1,17 +1,37 @@
 <div class="page-container">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <mat-icon>wine_bar</mat-icon>
       <span>E-Wine</span>
     </div>
+
     <nav class="sidebar-nav">
-      <a class="nav-item active" routerLink="/produtos">
+      <a class="nav-item" routerLink="/admin/produtos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon>inventory_2</mat-icon>
         Produtos
       </a>
+      <a class="nav-item" routerLink="/admin/marcas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>business</mat-icon>
+        Marcas
+      </a>
+      <a class="nav-item" routerLink="/admin/paises" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>public</mat-icon>
+        Paises
+      </a>
+      <a class="nav-item" routerLink="/admin/safras" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>event_repeat</mat-icon>
+        Safras
+      </a>
+      <a class="nav-item" routerLink="/admin/tipos-vinho" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>local_bar</mat-icon>
+        Tipos
+      </a>
+      <a class="nav-item" routerLink="/admin/uvas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>grass</mat-icon>
+        Uvas
+      </a>
     </nav>
+
     <div class="sidebar-footer">
       <button class="logout-btn" (click)="cancelar()">
         <mat-icon>logout</mat-icon>
@@ -20,179 +40,190 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main-content">
-
     <div class="page-header">
       <button mat-icon-button class="back-btn" (click)="cancelar()">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
-        <h1>{{ editando ? '✏️ Editar Produto' : '🍷 Novo Produto' }}</h1>
-        <p>{{ editando ? 'Atualize as informações do vinho' : 'Cadastre um novo vinho no catálogo' }}</p>
+        <h1>{{ editando ? 'Editar Produto' : 'Novo Produto' }}</h1>
+        <p>{{ editando ? 'Atualize as informacoes do vinho' : 'Cadastre um novo vinho no catalogo' }}</p>
       </div>
     </div>
 
     <div class="form-card">
+      @if (mensagemErro) {
+        <div class="feedback erro">{{ mensagemErro }}</div>
+      }
 
-      <!-- INFORMAÇÕES BÁSICAS -->
-      <p class="section-title">Informações Básicas</p>
+      <p class="section-title">Informacoes Basicas</p>
+
       <div class="form-grid">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>SKU</mat-label>
-          <input matInput [(ngModel)]="dto.sku" placeholder="Ex: VIN-MIO-CS-2020-750">
+          <input matInput required [(ngModel)]="dto.sku" placeholder="Ex: VIN-MIO-CS-2020-750">
           <mat-icon matSuffix>qr_code</mat-icon>
+          @if (campoTextoInvalido(dto.sku)) {
+            <mat-error>Informe o SKU.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nome do Vinho</mat-label>
-          <input matInput [(ngModel)]="dto.nome" placeholder="Ex: Miolo Reserva">
+          <input matInput required minlength="2" [(ngModel)]="dto.nome" placeholder="Ex: Miolo Reserva">
           <mat-icon matSuffix>wine_bar</mat-icon>
+          @if (campoTextoInvalido(dto.nome)) {
+            <mat-error>Informe o nome do vinho.</mat-error>
+          }
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Descrição</mat-label>
-        <textarea matInput [(ngModel)]="dto.descricao" rows="3"
-                  placeholder="Descreva o vinho..."></textarea>
+        <mat-label>Descricao</mat-label>
+        <textarea matInput required minlength="10" [(ngModel)]="dto.descricao" rows="3" placeholder="Descreva o vinho..."></textarea>
+        @if (formSubmetido && dto.descricao.trim().length < 10) {
+          <mat-error>Informe uma descricao com pelo menos 10 caracteres.</mat-error>
+        }
       </mat-form-field>
 
       <div class="form-grid">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Preço</mat-label>
-          <input matInput type="number" [(ngModel)]="dto.preco">
+          <mat-label>Preco</mat-label>
+          <input matInput required min="0.01" type="number" [(ngModel)]="dto.preco">
           <span matPrefix>R$&nbsp;</span>
+          @if (campoNumeroInvalido(dto.preco)) {
+            <mat-error>Informe um preco maior que zero.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Estoque</mat-label>
-          <input matInput type="number" [(ngModel)]="dto.quantEstoque">
+          <input matInput required min="0" type="number" [(ngModel)]="dto.quantEstoque">
           <span matSuffix>un.</span>
+          @if (formSubmetido && dto.quantEstoque < 0) {
+            <mat-error>Estoque nao pode ser negativo.</mat-error>
+          }
         </mat-form-field>
       </div>
 
       <div class="form-grid">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Teor Alcoólico (%)</mat-label>
-          <input matInput type="number" [(ngModel)]="dto.teorAlcoolico" placeholder="Ex: 13.5">
+          <mat-label>Teor Alcoolico (%)</mat-label>
+          <input matInput required min="0.1" type="number" [(ngModel)]="dto.teorAlcoolico" placeholder="Ex: 13.5">
           <span matSuffix>%</span>
+          @if (campoNumeroInvalido(dto.teorAlcoolico)) {
+            <mat-error>Informe o teor alcoolico.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Volume (ml)</mat-label>
-          <input matInput type="number" [(ngModel)]="dto.volume" placeholder="Ex: 750">
+          <input matInput required min="1" type="number" [(ngModel)]="dto.volume" placeholder="Ex: 750">
           <span matSuffix>ml</span>
+          @if (campoNumeroInvalido(dto.volume)) {
+            <mat-error>Informe o volume.</mat-error>
+          }
         </mat-form-field>
       </div>
 
-      <!-- CLASSIFICAÇÃO -->
-      <p class="section-title" style="margin-top: 8px;">Classificação</p>
+      <p class="section-title" style="margin-top: 8px;">Classificacao</p>
+
       <div class="form-grid">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Tipo de Vinho</mat-label>
-          <mat-select [(ngModel)]="dto.tipoVinho.id">
-            <mat-option [value]="1">🍷 Tinto</mat-option>
-            <mat-option [value]="2">🥂 Branco</mat-option>
-            <mat-option [value]="3">🌸 Rosé</mat-option>
-            <mat-option [value]="4">✨ Espumante</mat-option>
-            <mat-option [value]="5">🍯 Fortificado</mat-option>
-            <mat-option [value]="6">🍰 Sobremesa</mat-option>
+          <mat-select required [(ngModel)]="dto.tipoVinho.id">
+            @for (tipo of tiposVinho; track tipo.id) {
+              <mat-option [value]="tipo.id">{{ tipo.nome }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(dto.tipoVinho.id)) {
+            <mat-error>Selecione o tipo.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>País de Origem</mat-label>
-          <mat-select [(ngModel)]="dto.pais.id">
-            <mat-option [value]="1">🇧🇷 Brasil</mat-option>
-            <mat-option [value]="2">🇫🇷 França</mat-option>
-            <mat-option [value]="3">🇮🇹 Itália</mat-option>
-            <mat-option [value]="4">🇪🇸 Espanha</mat-option>
-            <mat-option [value]="5">🇵🇹 Portugal</mat-option>
-            <mat-option [value]="6">🇨🇱 Chile</mat-option>
-            <mat-option [value]="7">🇦🇷 Argentina</mat-option>
-            <mat-option [value]="8">🇺🇸 Estados Unidos</mat-option>
+          <mat-label>Pais de Origem</mat-label>
+          <mat-select required [(ngModel)]="dto.pais.id">
+            @for (pais of paises; track pais.id) {
+              <mat-option [value]="pais.id">{{ pais.nome }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(dto.pais.id)) {
+            <mat-error>Selecione o pais.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Safra</mat-label>
-          <mat-select [(ngModel)]="dto.safra.id">
-            <mat-option [value]="1">2020</mat-option>
-            <mat-option [value]="2">2019</mat-option>
-            <mat-option [value]="3">2018</mat-option>
-            <mat-option [value]="4">2017</mat-option>
-            <mat-option [value]="5">2016</mat-option>
-            <mat-option [value]="6">2015</mat-option>
+          <mat-select required [(ngModel)]="dto.safra.id">
+            @for (safra of safras; track safra.id) {
+              <mat-option [value]="safra.id">{{ safra.ano }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(dto.safra.id)) {
+            <mat-error>Selecione a safra.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Marca</mat-label>
-          <mat-select [(ngModel)]="dto.marca.id">
-            <mat-option [value]="1">Miolo</mat-option>
-            <mat-option [value]="2">Casa Valduga</mat-option>
-            <mat-option [value]="3">Salton</mat-option>
-            <mat-option [value]="4">Château Margaux</mat-option>
-            <mat-option [value]="5">Antinori</mat-option>
-            <mat-option [value]="6">Concha y Toro</mat-option>
-            <mat-option [value]="7">Catena Zapata</mat-option>
+          <mat-select required [(ngModel)]="dto.marca.id">
+            @for (marca of marcas; track marca.id) {
+              <mat-option [value]="marca.id">{{ marca.nome }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(dto.marca.id)) {
+            <mat-error>Selecione a marca.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Estilo</mat-label>
-          <mat-select [(ngModel)]="dto.estilo.id">
-            <mat-option [value]="1">Seco</mat-option>
-            <mat-option [value]="2">Suave</mat-option>
-            <mat-option [value]="3">Meio Seco</mat-option>
-            <mat-option [value]="4">Doce</mat-option>
-            <mat-option [value]="5">Frisante</mat-option>
-            <mat-option [value]="6">Espumante</mat-option>
+          <mat-select required [(ngModel)]="dto.estilo.id">
+            @for (estilo of estilos; track estilo.id) {
+              <mat-option [value]="estilo.id">{{ estilo.nome }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(dto.estilo.id)) {
+            <mat-error>Selecione o estilo.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Ocasião</mat-label>
-          <mat-select [(ngModel)]="dto.ocasiao.id">
-            <mat-option [value]="1">🕯️ Jantar Romântico</mat-option>
-            <mat-option [value]="2">🔥 Churrasco</mat-option>
-            <mat-option [value]="3">🎉 Confraternização</mat-option>
-            <mat-option [value]="4">🥂 Celebração</mat-option>
-            <mat-option [value]="5">👃 Degustação</mat-option>
-            <mat-option [value]="6">🍽️ Harmonização</mat-option>
-            <mat-option [value]="7">🎁 Presente</mat-option>
+          <mat-label>Ocasiao</mat-label>
+          <mat-select required [(ngModel)]="dto.ocasiao.id">
+            @for (ocasiao of ocasioes; track ocasiao.id) {
+              <mat-option [value]="ocasiao.id">{{ ocasiao.nome }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(dto.ocasiao.id)) {
+            <mat-error>Selecione a ocasiao.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Uva Principal</mat-label>
-          <mat-select [(ngModel)]="uvaId">
-            <mat-option [value]="1">Cabernet Sauvignon</mat-option>
-            <mat-option [value]="2">Merlot</mat-option>
-            <mat-option [value]="3">Tannat</mat-option>
-            <mat-option [value]="4">Malbec</mat-option>
-            <mat-option [value]="5">Chardonnay</mat-option>
-            <mat-option [value]="6">Sauvignon Blanc</mat-option>
-            <mat-option [value]="7">Pinot Noir</mat-option>
-            <mat-option [value]="8">Moscato</mat-option>
-            <mat-option [value]="9">Riesling</mat-option>
-            <mat-option [value]="10">Tempranillo</mat-option>
-            <mat-option [value]="11">Syrah</mat-option>
-            <mat-option [value]="12">Sangiovese</mat-option>
+          <mat-select required [(ngModel)]="uvaId">
+            @for (uva of uvas; track uva.id) {
+              <mat-option [value]="uva.id">{{ uva.nome }}</mat-option>
+            }
           </mat-select>
+          @if (campoSelecaoInvalido(uvaId)) {
+            <mat-error>Selecione a uva.</mat-error>
+          }
         </mat-form-field>
       </div>
 
-      <!-- AÇÕES -->
       <div class="form-actions">
         <button mat-stroked-button class="btn-cancelar" (click)="cancelar()">
-          <mat-icon>close</mat-icon> Cancelar
+          <mat-icon>close</mat-icon>
+          Cancelar
         </button>
         <button mat-raised-button class="btn-salvar" (click)="salvar()">
-          <mat-icon>save</mat-icon> Salvar Produto
+          <mat-icon>save</mat-icon>
+          Salvar Produto
         </button>
       </div>
-
     </div>
   </main>
 </div>

@@ -28,9 +28,24 @@ import { Produto } from '../../models/produto.model';
 export class LojaComponent implements OnInit {
 
   produtos: Produto[] = [];
-  produtosFiltrados: Produto[] = [];
   loading = true;
   skeletons = Array(8).fill(0);
+  termoBusca = '';
+  paginaAtual = 0;
+  tamanhoPagina = 8;
+  totalRegistros = 0;
+
+  get totalPaginas(): number {
+    return Math.max(1, Math.ceil(this.totalRegistros / this.tamanhoPagina));
+  }
+
+  get podeVoltar(): boolean {
+    return this.paginaAtual > 0;
+  }
+
+  get podeAvancar(): boolean {
+    return this.paginaAtual + 1 < this.totalPaginas;
+  }
 
   constructor(
     private produtoService: ProdutoService,
@@ -46,10 +61,10 @@ export class LojaComponent implements OnInit {
 
   carregarProdutos(): void {
     this.loading = true;
-    this.produtoService.findAll().subscribe({
-      next: (data) => {
-        this.produtos = data;
-        this.produtosFiltrados = data;
+    this.produtoService.findPage(this.termoBusca, { page: this.paginaAtual, size: this.tamanhoPagina }).subscribe({
+      next: (pagina) => {
+        this.produtos = pagina.itens;
+        this.totalRegistros = pagina.total;
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -61,14 +76,41 @@ export class LojaComponent implements OnInit {
   }
 
   filtrar(event: Event): void {
-    const termo = (event.target as HTMLInputElement).value.toLowerCase();
-    this.produtosFiltrados = this.produtos.filter(p =>
-      p.nome.toLowerCase().includes(termo)
-    );
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 0;
+    this.carregarProdutos();
+  }
+
+  limparBusca(): void {
+    this.termoBusca = '';
+    this.paginaAtual = 0;
+    this.carregarProdutos();
+  }
+
+  paginaAnterior(): void {
+    if (!this.podeVoltar) {
+      return;
+    }
+
+    this.paginaAtual -= 1;
+    this.carregarProdutos();
+  }
+
+  proximaPagina(): void {
+    if (!this.podeAvancar) {
+      return;
+    }
+
+    this.paginaAtual += 1;
+    this.carregarProdutos();
   }
 
   verDetalhe(id: number): void {
     this.router.navigate(['/loja/produto', id]);
+  }
+
+  abrirMinhaConta(): void {
+    this.router.navigate(['/cliente']);
   }
 
   adicionarCarrinho(produto: Produto): void {

@@ -8,9 +8,29 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="nav-item active">
+      <a class="nav-item" routerLink="/admin/produtos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon>inventory_2</mat-icon>
         Produtos
+      </a>
+      <a class="nav-item" routerLink="/admin/marcas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>business</mat-icon>
+        Marcas
+      </a>
+      <a class="nav-item" routerLink="/admin/paises" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>public</mat-icon>
+        Paises
+      </a>
+      <a class="nav-item" routerLink="/admin/safras" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>event_repeat</mat-icon>
+        Safras
+      </a>
+      <a class="nav-item" routerLink="/admin/tipos-vinho" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>local_bar</mat-icon>
+        Tipos
+      </a>
+      <a class="nav-item" routerLink="/admin/uvas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>grass</mat-icon>
+        Uvas
       </a>
     </nav>
 
@@ -44,7 +64,7 @@
         </div>
         <div class="stat-info">
           <span>Total de Produtos</span>
-          <strong>{{ dataSource.data.length }}</strong>
+          <strong>{{ totalRegistros }}</strong>
         </div>
       </div>
 
@@ -74,9 +94,14 @@
       <div class="table-toolbar">
         <mat-form-field appearance="outline" class="search-field">
           <mat-label>Pesquisar produto...</mat-label>
-          <input matInput (keyup)="applyFilter($event)">
+          <input matInput [(ngModel)]="termoBusca" (keyup.enter)="pesquisar()">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
+
+        <div class="toolbar-actions">
+          <button mat-stroked-button (click)="limparBusca()">Limpar</button>
+          <button mat-raised-button class="btn-buscar" (click)="pesquisar()">Buscar</button>
+        </div>
       </div>
 
       <table mat-table [dataSource]="dataSource" style="width: 100%;">
@@ -133,6 +158,16 @@
         </tr>
 
       </table>
+
+      <div class="pagination-bar">
+        <button mat-stroked-button type="button" (click)="paginaAnterior()" [disabled]="!podeVoltar">
+          Anterior
+        </button>
+        <span>Pagina {{ paginaAtual + 1 }} de {{ totalPaginas }} - {{ totalRegistros }} registros</span>
+        <button mat-stroked-button type="button" (click)="proximaPagina()" [disabled]="!podeAvancar">
+          Proxima
+        </button>
+      </div>
     </div>
 
   </main>

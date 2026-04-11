@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+
+.pagination-bar {
+  align-items: center;
+  border-top: 1px solid rgba(31, 41, 55, 0.12);
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+
+.pagination-bar span {
+  color: #475569;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .pagination-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pagination-bar span {
+    text-align: center;
+  }
+}

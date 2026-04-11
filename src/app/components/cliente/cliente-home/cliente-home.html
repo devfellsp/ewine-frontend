@@ -1,0 +1,130 @@
+<div class="account-page">
+  <header class="topbar">
+    <a class="brand" routerLink="/loja" aria-label="Voltar para o catalogo">
+      <span class="brand-mark">E</span>
+      <span>E-Wine</span>
+    </a>
+
+    <div class="topbar-actions">
+      <a routerLink="/loja">Catalogo</a>
+      <button type="button" (click)="logout()">Sair</button>
+    </div>
+  </header>
+
+  <main class="account-layout">
+    <aside class="profile-panel">
+      <span class="label">Minha conta</span>
+      <div class="avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+
+      <h1>{{ cliente?.usuario?.nome || 'Cliente E-Wine' }}</h1>
+      <p>{{ cliente?.email || 'Carregando dados da conta...' }}</p>
+
+      <div class="profile-meta">
+        <span>{{ perfil() }}</span>
+        @if (cliente?.usuario?.login) {
+          <span>{{ cliente?.usuario?.login }}</span>
+        }
+      </div>
+    </aside>
+
+    <section class="details-panel">
+      @if (carregando) {
+        <div class="state-card">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Carregando dados da sua conta...</p>
+        </div>
+      } @else if (mensagemErro) {
+        <div class="state-card error">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ mensagemErro }}</p>
+        </div>
+      } @else if (cliente) {
+        <section class="section-card">
+          <div class="section-title">
+            <div>
+              <span>Dados pessoais</span>
+              <h2>Informacoes do cadastro</h2>
+            </div>
+          </div>
+
+          <dl class="info-list">
+            <div>
+              <dt>Nome completo</dt>
+              <dd>{{ cliente.usuario.nome }}</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd>{{ cliente.email }}</dd>
+            </div>
+            <div>
+              <dt>CPF</dt>
+              <dd>{{ cliente.cpf }}</dd>
+            </div>
+            <div>
+              <dt>Login</dt>
+              <dd>{{ cliente.usuario.login }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="section-card orders-card">
+          <div class="section-title">
+            <div>
+              <span>Compras</span>
+              <h2>Meus pedidos</h2>
+            </div>
+            <mat-icon>receipt_long</mat-icon>
+          </div>
+
+          <div class="empty-orders">
+            <mat-icon>shopping_bag</mat-icon>
+            <div>
+              <h3>Nenhum pedido encontrado</h3>
+              <p>Quando voce finalizar uma compra, seus pedidos aparecerao aqui.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-title">
+            <div>
+              <span>Entrega</span>
+              <h2>Enderecos cadastrados</h2>
+            </div>
+            <strong>{{ cliente.endereco.length }}</strong>
+          </div>
+
+          @if (cliente.endereco.length === 0) {
+            <div class="empty-address">
+              <mat-icon>location_off</mat-icon>
+              <div>
+                <h3>Nenhum endereco cadastrado</h3>
+                <p>Quando voce cadastrar um endereco, ele aparecera aqui.</p>
+              </div>
+            </div>
+          } @else {
+            <div class="address-list">
+              @for (endereco of cliente.endereco; track endereco.id) {
+                <article class="address-card">
+                  <div class="pin">
+                    <mat-icon>location_on</mat-icon>
+                  </div>
+                  <div>
+                    <h3>{{ endereco.logradouro }}, {{ endereco.numero }}</h3>
+                    <p>{{ endereco.cidade }}</p>
+                    <p>CEP {{ endereco.cep }}</p>
+                    @if (endereco.complemento) {
+                      <p>{{ endereco.complemento }}</p>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </section>
+      }
+    </section>
+  </main>
+</div>

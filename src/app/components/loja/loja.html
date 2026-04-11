@@ -1,6 +1,4 @@
 <div class="loja-container">
-
-  <!-- HEADER -->
   <header class="loja-header">
     <div class="header-brand">
       <mat-icon>wine_bar</mat-icon>
@@ -9,16 +7,16 @@
 
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Buscar vinhos...</mat-label>
-      <input matInput (keyup)="filtrar($event)" [disabled]="loading">
+      <input matInput [value]="termoBusca" (keyup.enter)="filtrar($event)" [disabled]="loading">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 
     <div class="header-actions">
-      <button mat-icon-button matTooltip="Minha conta">
+      <button mat-icon-button matTooltip="Minha conta" (click)="abrirMinhaConta()">
         <mat-icon>person</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Meus pedidos">
-        <mat-icon>receipt_long</mat-icon>
+      <button mat-icon-button matTooltip="Carrinho">
+        <mat-icon>shopping_cart</mat-icon>
       </button>
       <button mat-icon-button matTooltip="Sair" (click)="logout()">
         <mat-icon>logout</mat-icon>
@@ -26,32 +24,28 @@
     </div>
   </header>
 
-  <!-- HERO -->
   <div class="hero">
     <div class="hero-text">
-      <h1>Os melhores<br><span>vinhos do mundo</span><br>para você 🍷</h1>
+      <h1>Os melhores<br><span>vinhos do mundo</span><br>para voce</h1>
       <p>Curadoria especial de vinhos premium, entregues na sua porta</p>
       <div class="hero-badges">
         <div class="badge"><mat-icon>verified</mat-icon> Vinhos Selecionados</div>
-        <div class="badge"><mat-icon>local_shipping</mat-icon> Entrega Rápida</div>
-        <div class="badge"><mat-icon>star</mat-icon> Melhor Preço</div>
+        <div class="badge"><mat-icon>local_shipping</mat-icon> Entrega Rapida</div>
+        <div class="badge"><mat-icon>star</mat-icon> Melhor Preco</div>
       </div>
     </div>
     <mat-icon class="hero-visual">wine_bar</mat-icon>
   </div>
 
-  <!-- PRODUTOS -->
   <main class="produtos-section">
     <div class="section-header">
-      <h2>🍷 Nosso Catálogo</h2>
+      <h2>Nosso Catalogo</h2>
       @if (!loading) {
-        <span class="total-badge">{{ produtosFiltrados.length }} vinhos disponíveis</span>
+        <span class="total-badge">{{ totalRegistros }} vinhos disponiveis</span>
       }
     </div>
 
     <div class="produtos-grid">
-
-      <!-- SKELETON LOADING -->
       @if (loading) {
         @for (s of skeletons; track $index) {
           <div class="produto-card skeleton-card">
@@ -69,27 +63,29 @@
         }
       }
 
-      <!-- PRODUTOS CARREGADOS -->
       @if (!loading) {
-        @if (produtosFiltrados.length === 0) {
+        @if (produtos.length === 0) {
           <div class="empty-state">
             <mat-icon>search_off</mat-icon>
             <p>Nenhum vinho encontrado</p>
           </div>
         }
 
-        @for (produto of produtosFiltrados; track produto.id) {
+        @for (produto of produtos; track produto.id) {
           <div class="produto-card" (click)="verDetalhe(produto.id)">
             <div class="card-img">
               <span class="card-tipo">Vinho</span>
               <mat-icon class="wine-icon">wine_bar</mat-icon>
             </div>
+
             <div class="card-body">
               <h3>{{ produto.nome }}</h3>
               <p class="descricao">{{ produto.descricao || 'Vinho premium selecionado' }}</p>
+
               <div class="card-info">
-                <span class="chip">{{ produto.quantEstoque ?? 0}} un.</span>
+                <span class="chip">{{ produto.quantEstoque }} un.</span>
               </div>
+
               <div class="card-footer">
                 <span class="preco">{{ produto.preco | currency:'BRL' }}</span>
                 <button mat-raised-button class="btn-comprar" (click)="adicionarCarrinho(produto); $event.stopPropagation()">
@@ -101,8 +97,24 @@
           </div>
         }
       }
+    </div>
 
+    <div class="catalog-pagination">
+      <button mat-stroked-button type="button" (click)="paginaAnterior()" [disabled]="loading || !podeVoltar">
+        Anterior
+      </button>
+
+      <span>Pagina {{ paginaAtual + 1 }} de {{ totalPaginas }}</span>
+
+      <button mat-stroked-button type="button" (click)="proximaPagina()" [disabled]="loading || !podeAvancar">
+        Proxima
+      </button>
+
+      @if (termoBusca) {
+        <button mat-button type="button" (click)="limparBusca()" [disabled]="loading">
+          Limpar busca
+        </button>
+      }
     </div>
   </main>
-
 </div>

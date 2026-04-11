@@ -121,6 +121,20 @@
   gap: 24px;
 }
 
+.catalog-pagination {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+.catalog-pagination span {
+  color: #6a0032;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 /* ===== CARD ===== */
 .produto-card {
   background: white;

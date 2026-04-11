@@ -1,0 +1,111 @@
+<div class="page-container">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <mat-icon>wine_bar</mat-icon>
+      <span>E-Wine</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/admin/produtos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>inventory_2</mat-icon>
+        Produtos
+      </a>
+      <a class="nav-item active" routerLink="/admin/marcas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>business</mat-icon>
+        Marcas
+      </a>
+      <a class="nav-item" routerLink="/admin/paises" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>public</mat-icon>
+        Paises
+      </a>
+      <a class="nav-item" routerLink="/admin/safras" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>event_repeat</mat-icon>
+        Safras
+      </a>
+      <a class="nav-item" routerLink="/admin/tipos-vinho" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>local_bar</mat-icon>
+        Tipos
+      </a>
+      <a class="nav-item" routerLink="/admin/uvas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>grass</mat-icon>
+        Uvas
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <button mat-icon-button class="back-btn" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1>{{ editando() ? 'Editar Marca' : 'Nova Marca' }}</h1>
+        <p>{{ editando() ? 'Atualize os dados da marca selecionada' : 'Cadastre uma nova marca para o catalogo' }}</p>
+      </div>
+    </div>
+
+    <section class="form-card">
+      @if (mensagemErro()) {
+        <div class="feedback erro">{{ mensagemErro() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="salvar()">
+        <p class="section-title">Dados da Marca</p>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="nome" placeholder="Ex: Miolo">
+            <mat-icon matSuffix>label</mat-icon>
+            @if (campoInvalido('nome')) {
+              <mat-error>Informe um nome com pelo menos 2 caracteres.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Pais de origem</mat-label>
+            <input matInput formControlName="paisDeOrigem" placeholder="Ex: Brasil">
+            <mat-icon matSuffix>public</mat-icon>
+            @if (campoInvalido('paisDeOrigem')) {
+              <mat-error>Informe o pais de origem.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ano de fundacao</mat-label>
+            <input matInput [matDatepicker]="pickerAnoFundacao" formControlName="anoFundacao" placeholder="Selecione a data">
+            <mat-datepicker-toggle matIconSuffix [for]="pickerAnoFundacao"></mat-datepicker-toggle>
+            <mat-datepicker #pickerAnoFundacao></mat-datepicker>
+            @if (campoInvalido('anoFundacao')) {
+              <mat-error>Informe uma data valida.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Classificacao</mat-label>
+            <input matInput formControlName="classificacao" placeholder="Ex: Premium">
+            <mat-icon matSuffix>workspace_premium</mat-icon>
+            @if (campoInvalido('classificacao')) {
+              <mat-error>Informe a classificacao da marca.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+          <button mat-raised-button type="submit" class="btn-salvar" [disabled]="salvando()">
+            <mat-icon>save</mat-icon>
+            {{ salvando() ? 'Salvando...' : 'Salvar Marca' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>

@@ -66,7 +66,7 @@ export class LoginComponent {
         if (this.authService.isAdmin()) {
           this.router.navigate(['/admin/produtos']);
         } else {
-          this.router.navigate(['/loja']);
+          this.router.navigate(['/cliente']);
         }
 
         this.cdr.detectChanges();

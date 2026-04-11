@@ -14,6 +14,8 @@ export class AuthService {
   constructor(private httpClient: HttpClient) {}
 
   login(credenciais: Login): Observable<HttpResponse<string>> {
+    this.limparSessaoLocal();
+
     return this.httpClient
       .post(this.api, credenciais, {
         observe: 'response',
@@ -41,6 +43,10 @@ export class AuthService {
       .post(`${this.api}/logout`, {}, { withCredentials: true })
       .subscribe();
 
+    this.limparSessaoLocal();
+  }
+
+  limparSessaoLocal(): void {
     localStorage.removeItem(this.tokenStorageKey);
     localStorage.removeItem(this.perfilStorageKey);
   }

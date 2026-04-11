@@ -1,0 +1,154 @@
+<div class="page-container">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <mat-icon>wine_bar</mat-icon>
+      <span>E-Wine</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/admin/produtos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>inventory_2</mat-icon>
+        Produtos
+      </a>
+      <a class="nav-item" routerLink="/admin/marcas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>business</mat-icon>
+        Marcas
+      </a>
+      <a class="nav-item" routerLink="/admin/paises" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>public</mat-icon>
+        Paises
+      </a>
+      <a class="nav-item active" routerLink="/admin/safras" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>event_repeat</mat-icon>
+        Safras
+      </a>
+      <a class="nav-item" routerLink="/admin/tipos-vinho" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>local_bar</mat-icon>
+        Tipos
+      </a>
+      <a class="nav-item" routerLink="/admin/uvas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>grass</mat-icon>
+        Uvas
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div class="page-title">
+        <h1>Safras</h1>
+        <p>Gerencie os anos e descricoes das safras</p>
+      </div>
+      <button mat-raised-button class="btn-novo" routerLink="/admin/safras/new">
+        <mat-icon>add</mat-icon>
+        Nova Safra
+      </button>
+    </div>
+
+    <div class="stats-row">
+      <article class="stat-card">
+        <div class="stat-icon wine">
+          <mat-icon>event_repeat</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span>Total de Safras</span>
+          <strong>{{ totalSafras() }}</strong>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon stock">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span>Safra Mais Recente</span>
+          <strong>{{ anoMaisRecente() || '-' }}</strong>
+        </div>
+      </article>
+    </div>
+
+    <section class="table-card">
+      <div class="table-toolbar table-toolbar--grid">
+        <mat-form-field appearance="outline" class="search-field search-field--ano">
+          <mat-label>Filtrar por ano...</mat-label>
+          <input
+            matInput
+            [ngModel]="anoBusca()"
+            (ngModelChange)="anoBusca.set($event)"
+            (keyup.enter)="pesquisar()"
+          >
+          <mat-icon matSuffix>calendar_today</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Pesquisar descricao...</mat-label>
+          <input
+            matInput
+            [ngModel]="descricaoBusca()"
+            (ngModelChange)="descricaoBusca.set($event)"
+            (keyup.enter)="pesquisar()"
+          >
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="toolbar-actions">
+          <button mat-stroked-button (click)="limparBusca()">Limpar</button>
+          <button mat-raised-button class="btn-buscar" (click)="pesquisar()">Buscar</button>
+        </div>
+      </div>
+
+      @if (mensagemErro()) {
+        <div class="feedback erro">{{ mensagemErro() }}</div>
+      }
+
+      @if (carregando()) {
+        <div class="feedback">Carregando safras...</div>
+      } @else if (safras().length === 0) {
+        <div class="empty-state">
+          <mat-icon>event_busy</mat-icon>
+          <p>Nenhuma safra encontrada</p>
+        </div>
+      } @else {
+        <div class="list-wrapper">
+          @for (safra of safras(); track safra.id) {
+            <article class="safra-card">
+              <div class="safra-card__content">
+                <div class="safra-card__header">
+                  <h2>{{ safra.ano }}</h2>
+                  <span class="badge">ID {{ safra.id }}</span>
+                </div>
+                <p>{{ safra.descricao }}</p>
+              </div>
+
+              <div class="safra-card__actions">
+                <button mat-icon-button color="primary" (click)="editar(safra.id)" matTooltip="Editar safra">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="excluir(safra)" matTooltip="Excluir safra">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+
+        <div class="pagination-bar">
+          <button mat-stroked-button type="button" (click)="paginaAnterior()" [disabled]="!podeVoltar()">
+            Anterior
+          </button>
+          <span>Pagina {{ paginaAtual() + 1 }} de {{ totalPaginas() }} - {{ totalRegistros() }} registros</span>
+          <button mat-stroked-button type="button" (click)="proximaPagina()" [disabled]="!podeAvancar()">
+            Proxima
+          </button>
+        </div>
+      }
+    </section>
+  </main>
+</div>
