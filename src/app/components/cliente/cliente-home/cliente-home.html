@@ -1,107 +1,308 @@
-<div class="account-page">
-  <header class="topbar">
-    <a class="brand" routerLink="/loja" aria-label="Voltar para o catalogo">
-      <span class="brand-mark">E</span>
-      <span>E-Wine</span>
-    </a>
-
-    <div class="topbar-actions">
-      <a routerLink="/loja">Catalogo</a>
-      <button type="button" (click)="logout()">Sair</button>
-    </div>
+﻿<div class="account-page">
+  <header class="mobile-header">
+    <button class="menu-toggle" type="button" (click)="alternarMenu()" [attr.aria-expanded]="menuAberto()" aria-controls="cliente-menu" aria-label="Abrir menu da conta">
+      <mat-icon>{{ menuAberto() ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    <span>{{ tituloPagina() }}</span>
   </header>
 
-  <main class="account-layout">
-    <aside class="profile-panel">
-      <span class="label">Minha conta</span>
-      <div class="avatar">
-        <mat-icon>person</mat-icon>
+  @if (menuAberto()) {
+    <button class="menu-backdrop" type="button" aria-label="Fechar menu" (click)="fecharMenu()"></button>
+  }
+
+  <aside id="cliente-menu" class="sidebar" [class.open]="menuAberto()" aria-label="Navegacao da conta">
+
+    <nav class="sidebar-nav" aria-label="Secoes da area do cliente">
+      <a class="nav-item" routerLink="/cliente/dados" routerLinkActive="active" (click)="fecharMenu()">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dados</span>
+      </a>
+      <a class="nav-item" routerLink="/cliente/perfil" routerLinkActive="active" (click)="fecharMenu()">
+        <mat-icon>badge</mat-icon>
+        <span>Cliente</span>
+      </a>
+      <a class="nav-item" routerLink="/cliente/enderecos" routerLinkActive="active" (click)="fecharMenu()">
+        <mat-icon>location_on</mat-icon>
+        <span>Enderecos</span>
+      </a>
+      <a class="nav-item" routerLink="/cliente/seguranca" routerLinkActive="active" (click)="fecharMenu()">
+        <mat-icon>lock</mat-icon>
+        <span>Seguranca</span>
+      </a>
+      <a class="nav-item" routerLink="/cliente/pedidos" routerLinkActive="active" (click)="fecharMenu()">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Pedidos</span>
+      </a>
+      <a class="nav-item" routerLink="/loja" (click)="fecharMenu()">
+        <mat-icon>storefront</mat-icon>
+        <span>Loja</span>
+      </a>
+      <a class="nav-item" routerLink="/lista-desejos" (click)="fecharMenu()">
+        <mat-icon>favorite</mat-icon>
+        <span>Desejos</span>
+      </a>
+      <a class="nav-item" routerLink="/carrinho" (click)="fecharMenu()">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Carrinho</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    @if (carregando) {
+      <div class="state-card" role="status">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Carregando dados da sua conta...</p>
       </div>
-
-      <h1>{{ cliente?.usuario?.nome || 'Cliente E-Wine' }}</h1>
-      <p>{{ cliente?.email || 'Carregando dados da conta...' }}</p>
-
-      <div class="profile-meta">
-        <span>{{ perfil() }}</span>
-        @if (cliente?.usuario?.login) {
-          <span>{{ cliente?.usuario?.login }}</span>
-        }
+    } @else if (mensagemErro) {
+      <div class="state-card error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ mensagemErro }}</p>
       </div>
-    </aside>
+    } @else if (cliente) {
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">MINHA CONTA</span>
+          <h1>{{ tituloPagina() }}</h1>
+          <p>{{ descricaoPagina() }}</p>
+        </div>
+        <div class="header-badges" aria-label="Resumo do cliente">
+          <span>{{ perfil() }}</span>
+          <span>{{ cliente.usuario.login }}</span>
+        </div>
+      </header>
 
-    <section class="details-panel">
-      @if (carregando) {
-        <div class="state-card">
-          <mat-icon>hourglass_empty</mat-icon>
-          <p>Carregando dados da sua conta...</p>
-        </div>
-      } @else if (mensagemErro) {
-        <div class="state-card error">
-          <mat-icon>error_outline</mat-icon>
-          <p>{{ mensagemErro }}</p>
-        </div>
-      } @else if (cliente) {
+      @if (secaoAtual() === 'dados') {
+        <section class="summary-grid" aria-label="Resumo da conta">
+          <article class="summary-card">
+            <div class="summary-icon">
+              <mat-icon>person</mat-icon>
+            </div>
+            <span>CLIENTE</span>
+            <strong>{{ valorOuNaoInformado(cliente.usuario.nome) }}</strong>
+            <p>Perfil {{ perfil().toLowerCase() }}</p>
+            <a routerLink="/cliente/perfil">Ver dados</a>
+          </article>
+
+          <article class="summary-card">
+            <div class="summary-icon">
+              <mat-icon>mail</mat-icon>
+            </div>
+            <span>EMAIL</span>
+            <strong>{{ valorOuNaoInformado(cliente.email) }}</strong>
+            <p>Email principal da conta</p>
+            <a routerLink="/cliente/seguranca">Alterar email</a>
+          </article>
+
+          <article class="summary-card">
+            <div class="summary-icon">
+              <mat-icon>home</mat-icon>
+            </div>
+            <span>ENDERECOS</span>
+            <strong>{{ contadorEnderecos() }}</strong>
+            <p>Usado para entregas</p>
+            <a routerLink="/cliente/enderecos">Gerenciar</a>
+          </article>
+
+          <article class="summary-card">
+            <div class="summary-icon">
+              <mat-icon>receipt_long</mat-icon>
+            </div>
+            <span>PEDIDOS</span>
+            <strong>{{ contadorPedidos() }}</strong>
+            <p>Historico de compras</p>
+            <a routerLink="/cliente/pedidos">Ver pedidos</a>
+          </article>
+
+          <article class="summary-card">
+            <div class="summary-icon">
+              <mat-icon>lock</mat-icon>
+            </div>
+            <span>SEGURANCA</span>
+            <strong>Dados protegidos</strong>
+            <p>Atualize nome, email ou senha</p>
+            <a routerLink="/cliente/seguranca">Alterar seguranca</a>
+          </article>
+
+          <article class="summary-card">
+            <div class="summary-icon">
+              <mat-icon>favorite</mat-icon>
+            </div>
+            <span>LISTA DE DESEJOS</span>
+            <strong>Vinhos favoritos</strong>
+            <p>Itens salvos para comprar depois</p>
+            <a routerLink="/lista-desejos">Abrir desejos</a>
+          </article>
+        </section>
+
+        <section class="quick-actions" aria-labelledby="acoes-rapidas">
+          <div>
+            <span class="eyebrow">ATALHOS</span>
+            <h2 id="acoes-rapidas">Acoes rapidas</h2>
+          </div>
+          <div class="quick-actions-list">
+            <a routerLink="/cliente/perfil">Ver dados do cliente</a>
+            <a routerLink="/cliente/enderecos">Gerenciar enderecos</a>
+            <a routerLink="/cliente/seguranca">Alterar seguranca</a>
+            <a routerLink="/cliente/pedidos">Ver pedidos</a>
+          </div>
+        </section>
+      }
+
+      @if (secaoAtual() === 'perfil') {
+        <section class="content-grid">
+          <article class="section-card">
+            <div class="section-title">
+              <div>
+                <span>DADOS PESSOAIS</span>
+                <h2>Identificacao</h2>
+              </div>
+              <mat-icon>badge</mat-icon>
+            </div>
+
+            <dl class="info-list two-columns">
+              <div>
+                <dt>Nome</dt>
+                <dd>{{ valorOuNaoInformado(cliente.usuario.nome) }}</dd>
+              </div>
+              <div>
+                <dt>CPF</dt>
+                <dd>{{ valorOuNaoInformado(cliente.cpf) }}</dd>
+              </div>
+              <div>
+                <dt>Login</dt>
+                <dd>{{ valorOuNaoInformado(cliente.usuario.login) }}</dd>
+              </div>
+              <div>
+                <dt>Perfil</dt>
+                <dd>{{ valorOuNaoInformado(cliente.usuario.perfil) }}</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="section-card">
+            <div class="section-title">
+              <div>
+                <span>CONTATO</span>
+                <h2>Email e telefone</h2>
+              </div>
+              <mat-icon>contact_mail</mat-icon>
+            </div>
+
+            <dl class="info-list">
+              <div>
+                <dt>Email</dt>
+                <dd>{{ valorOuNaoInformado(cliente.email) }}</dd>
+              </div>
+              <div>
+                <dt>Telefone</dt>
+                <dd>{{ valorOuNaoInformado(cliente.telefone) }}</dd>
+              </div>
+            </dl>
+          </article>
+        </section>
+      }
+
+      @if (secaoAtual() === 'enderecos') {
         <section class="section-card">
           <div class="section-title">
             <div>
-              <span>Dados pessoais</span>
-              <h2>Informacoes do cadastro</h2>
-            </div>
-          </div>
-
-          <dl class="info-list">
-            <div>
-              <dt>Nome completo</dt>
-              <dd>{{ cliente.usuario.nome }}</dd>
-            </div>
-            <div>
-              <dt>Email</dt>
-              <dd>{{ cliente.email }}</dd>
-            </div>
-            <div>
-              <dt>CPF</dt>
-              <dd>{{ cliente.cpf }}</dd>
-            </div>
-            <div>
-              <dt>Login</dt>
-              <dd>{{ cliente.usuario.login }}</dd>
-            </div>
-          </dl>
-        </section>
-
-        <section class="section-card orders-card">
-          <div class="section-title">
-            <div>
-              <span>Compras</span>
-              <h2>Meus pedidos</h2>
-            </div>
-            <mat-icon>receipt_long</mat-icon>
-          </div>
-
-          <div class="empty-orders">
-            <mat-icon>shopping_bag</mat-icon>
-            <div>
-              <h3>Nenhum pedido encontrado</h3>
-              <p>Quando voce finalizar uma compra, seus pedidos aparecerao aqui.</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="section-card">
-          <div class="section-title">
-            <div>
-              <span>Entrega</span>
+              <span>ENTREGA</span>
               <h2>Enderecos cadastrados</h2>
             </div>
-            <strong>{{ cliente.endereco.length }}</strong>
+            <div class="section-actions">
+              <strong>{{ cliente.endereco.length }}</strong>
+              <button
+                type="button"
+                class="secondary-action"
+                (click)="alternarFormularioEndereco()"
+                [attr.aria-expanded]="formularioEnderecoAberto()"
+                aria-controls="formulario-endereco"
+              >
+                {{ formularioEnderecoAberto() ? 'Cancelar' : 'Adicionar endereco' }}
+              </button>
+            </div>
           </div>
 
+          @if (mensagemEndereco()) {
+            <p
+              class="profile-message"
+              [class.error]="tipoMensagemEndereco() === 'erro'"
+              [attr.role]="tipoMensagemEndereco() === 'erro' ? 'alert' : 'status'"
+            >
+              {{ mensagemEndereco() }}
+            </p>
+          }
+
+          @if (formularioEnderecoAberto()) {
+            <form id="formulario-endereco" class="address-form" [formGroup]="enderecoForm" (ngSubmit)="adicionarEndereco()">
+              <div class="form-heading">
+                <div>
+                  <span class="eyebrow">NOVO ENDERECO</span>
+                  <h3>Dados para entrega</h3>
+                </div>
+                <mat-icon>add_location_alt</mat-icon>
+              </div>
+
+              <div class="address-form-grid">
+                <label>
+                  <span>CEP</span>
+                  <input formControlName="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000">
+                  @if (enderecoForm.controls.cep.touched && enderecoForm.controls.cep.invalid) {
+                    <small>Informe um CEP valido.</small>
+                  }
+                </label>
+                <label class="wide-field">
+                  <span>Logradouro</span>
+                  <input formControlName="logradouro" autocomplete="street-address" placeholder="Rua, avenida ou alameda">
+                  @if (enderecoForm.controls.logradouro.touched && enderecoForm.controls.logradouro.invalid) {
+                    <small>Informe o logradouro.</small>
+                  }
+                </label>
+                <label>
+                  <span>Numero</span>
+                  <input type="number" min="1" formControlName="numero" inputmode="numeric">
+                  @if (enderecoForm.controls.numero.touched && enderecoForm.controls.numero.invalid) {
+                    <small>Informe um numero valido.</small>
+                  }
+                </label>
+                <label>
+                  <span>Complemento</span>
+                  <input formControlName="complemento" autocomplete="address-line2" placeholder="Apartamento, bloco...">
+                </label>
+                <label class="wide-field">
+                  <span>Cidade</span>
+                  <select formControlName="cidadeId">
+                    <option [ngValue]="0">Selecione uma cidade</option>
+                    @for (cidade of cidades(); track cidade.id) {
+                      <option [ngValue]="cidade.id">{{ cidade.nome }}</option>
+                    }
+                  </select>
+                  @if (enderecoForm.controls.cidadeId.touched && enderecoForm.controls.cidadeId.invalid) {
+                    <small>Selecione a cidade.</small>
+                  }
+                </label>
+              </div>
+
+              <button type="submit" class="primary-action" [disabled]="salvandoEndereco() || cidades().length === 0">
+                {{ salvandoEndereco() ? 'Salvando...' : 'Salvar endereco' }}
+              </button>
+            </form>
+          }
+
           @if (cliente.endereco.length === 0) {
-            <div class="empty-address">
+            <div class="empty-card">
               <mat-icon>location_off</mat-icon>
               <div>
                 <h3>Nenhum endereco cadastrado</h3>
-                <p>Quando voce cadastrar um endereco, ele aparecera aqui.</p>
+                <p>Cadastre um endereco para facilitar suas proximas compras.</p>
               </div>
             </div>
           } @else {
@@ -112,12 +313,15 @@
                     <mat-icon>location_on</mat-icon>
                   </div>
                   <div>
-                    <h3>{{ endereco.logradouro }}, {{ endereco.numero }}</h3>
-                    <p>{{ endereco.cidade }}</p>
-                    <p>CEP {{ endereco.cep }}</p>
-                    @if (endereco.complemento) {
-                      <p>{{ endereco.complemento }}</p>
-                    }
+                    <h3>{{ valorOuNaoInformado(endereco.logradouro) }}, {{ valorOuNaoInformado(endereco.numero) }}</h3>
+                    <dl>
+                      <div><dt>Bairro</dt><dd>{{ valorOuNaoInformado(endereco.bairro) }}</dd></div>
+                      <div><dt>CEP</dt><dd>{{ valorOuNaoInformado(endereco.cep) }}</dd></div>
+                      @if (endereco.complemento) {
+                        <div><dt>Complemento</dt><dd>{{ endereco.complemento }}</dd></div>
+                      }
+                      <div><dt>Cidade/Estado</dt><dd>{{ valorOuNaoInformado(endereco.cidade) }} / {{ valorOuNaoInformado(endereco.estado || endereco.uf) }}</dd></div>
+                    </dl>
                   </div>
                 </article>
               }
@@ -125,6 +329,184 @@
           }
         </section>
       }
-    </section>
+
+      @if (secaoAtual() === 'seguranca') {
+        <section class="section-card">
+          <div class="section-title">
+            <div>
+              <span>ACESSO</span>
+              <h2>Alterar dados de acesso</h2>
+            </div>
+            <mat-icon>lock</mat-icon>
+          </div>
+
+          @if (mensagemPerfil) {
+            <p class="profile-message" [class.error]="tipoMensagemPerfil() === 'erro'" role="status">{{ mensagemPerfil }}</p>
+          }
+
+          <div class="update-grid">
+            <form [formGroup]="nomeForm" (ngSubmit)="atualizarNome()">
+              <div>
+                <h3>Nome</h3>
+                <p>Atualize o nome exibido na sua conta.</p>
+              </div>
+              <label>
+                <span>Novo nome</span>
+                <input formControlName="nome" autocomplete="name" placeholder="Digite seu novo nome">
+              </label>
+              <label>
+                <span>Senha atual</span>
+                <input type="password" formControlName="senhaAtual" autocomplete="current-password" placeholder="Confirme sua senha atual">
+              </label>
+              <button type="submit">Atualizar nome</button>
+            </form>
+
+            <form [formGroup]="emailForm" (ngSubmit)="atualizarEmail()">
+              <div>
+                <h3>Email</h3>
+                <p>Use um email valido para receber atualizacoes.</p>
+              </div>
+              <label>
+                <span>Novo email</span>
+                <input type="email" formControlName="email" autocomplete="email" placeholder="nome@email.com">
+              </label>
+              <label>
+                <span>Senha atual</span>
+                <input type="password" formControlName="senhaAtual" autocomplete="current-password" placeholder="Confirme sua senha atual">
+              </label>
+              <button type="submit">Atualizar email</button>
+            </form>
+
+            <form [formGroup]="senhaForm" (ngSubmit)="atualizarSenha()">
+              <div>
+                <h3>Senha</h3>
+                <p>Escolha uma nova senha com pelo menos 6 caracteres.</p>
+              </div>
+              <label>
+                <span>Senha atual</span>
+                <input type="password" formControlName="senhaAtual" autocomplete="current-password" placeholder="Digite sua senha atual">
+                @if (senhaForm.controls.senhaAtual.touched && senhaForm.controls.senhaAtual.invalid) {
+                  <small>A senha atual e obrigatoria.</small>
+                }
+              </label>
+              <label>
+                <span>Nova senha</span>
+                <input type="password" formControlName="senha" autocomplete="new-password" placeholder="Digite a nova senha">
+                @if (senhaForm.controls.senha.touched && senhaForm.controls.senha.invalid) {
+                  <small>A nova senha deve ter pelo menos 6 caracteres.</small>
+                }
+              </label>
+              <label>
+                <span>Confirmar nova senha</span>
+                <input type="password" formControlName="confirmacaoSenha" autocomplete="new-password" placeholder="Repita a nova senha">
+                @if (senhaForm.controls.confirmacaoSenha.touched && senhaForm.controls.confirmacaoSenha.invalid) {
+                  <small>Confirme a nova senha.</small>
+                }
+              </label>
+              @if (senhaForm.touched && senhaForm.hasError('senhasDiferentes')) {
+                <small class="form-error">As novas senhas nao coincidem.</small>
+              }
+              @if (senhaForm.touched && senhaForm.hasError('senhaNaoAlterada')) {
+                <small class="form-error">A nova senha deve ser diferente da senha atual.</small>
+              }
+              <button type="submit" [disabled]="salvandoSenha()">
+                {{ salvandoSenha() ? 'Atualizando...' : 'Atualizar senha' }}
+              </button>
+            </form>
+          </div>
+        </section>
+      }
+
+      @if (secaoAtual() === 'pedidos') {
+        <section class="section-card orders-card">
+          <div class="section-title">
+            <div>
+              <span>COMPRAS</span>
+              <h2>Meus pedidos</h2>
+            </div>
+            <mat-icon>receipt_long</mat-icon>
+          </div>
+
+          @if (pedidos.length === 0) {
+            <div class="empty-card">
+              <mat-icon>shopping_bag</mat-icon>
+              <div>
+                <h3>Nenhum pedido encontrado</h3>
+                <p>Quando voce finalizar uma compra, seus pedidos aparecerao aqui.</p>
+                <a class="primary-action" routerLink="/loja">Explorar catalogo</a>
+              </div>
+            </div>
+          } @else {
+            <div class="orders-list">
+              @for (pedido of pedidos; track pedido.id) {
+                <article class="order-card" [class.expanded]="pedidoExpandidoId() === pedido.id">
+                  <div class="order-summary">
+                    <div class="order-main">
+                      <span class="status-pill">{{ pedido.status || 'Pedido registrado' }}</span>
+                      <h3>Pedido #{{ pedido.id }}</h3>
+                      <p>{{ pedido.dataCriacao ? (pedido.dataCriacao | date:'dd/MM/yyyy HH:mm') : 'Data nao informada' }}</p>
+                      <p>{{ quantidadeItensPedido(pedido) }} itens</p>
+                    </div>
+                    <dl>
+                      <div><dt>Subtotal</dt><dd>{{ (pedido.subtotal ?? 0) | currency:'BRL' }}</dd></div>
+                      <div><dt>Desconto</dt><dd>{{ (pedido.desconto ?? 0) | currency:'BRL' }}</dd></div>
+                      <div><dt>Total</dt><dd>{{ (pedido.total ?? 0) | currency:'BRL' }}</dd></div>
+                    </dl>
+                    <button
+                      type="button"
+                      class="secondary-action"
+                      (click)="alternarDetalhesPedido(pedido.id)"
+                      [attr.aria-expanded]="pedidoExpandidoId() === pedido.id"
+                      [attr.aria-controls]="'detalhes-pedido-' + pedido.id"
+                    >
+                      {{ pedidoExpandidoId() === pedido.id ? 'Ocultar detalhes' : 'Ver detalhes' }}
+                    </button>
+                  </div>
+
+                  @if (pedidoExpandidoId() === pedido.id) {
+                    <div class="order-details" [id]="'detalhes-pedido-' + pedido.id">
+                      <section>
+                        <h4>Itens do pedido</h4>
+                        @if (!pedido.itens?.length) {
+                          <p>Nenhum item informado pela API.</p>
+                        } @else {
+                          <div class="order-items">
+                            @for (item of pedido.itens; track $index) {
+                              <div class="order-item">
+                                <div>
+                                  <strong>{{ item.nomeProduto }}</strong>
+                                  <span>{{ item.quantidade }} unidade(s) x {{ item.precoUnitario | currency:'BRL' }}</span>
+                                </div>
+                                <strong>{{ subtotalItem(item.precoUnitario, item.quantidade) | currency:'BRL' }}</strong>
+                              </div>
+                            }
+                          </div>
+                        }
+                      </section>
+                      <section>
+                        <h4>Pagamento</h4>
+                        <dl>
+                          <div><dt>Forma</dt><dd>{{ pedido.pagamento?.formaPagamento?.nome || pedido.pagamento?.tipo || 'Nao informada' }}</dd></div>
+                          <div><dt>Parcelas</dt><dd>{{ pedido.pagamento?.parcelas || 1 }}</dd></div>
+                          <div><dt>Status</dt><dd>{{ pedido.pagamento?.status || pedido.status || 'Nao informado' }}</dd></div>
+                          <div><dt>Cupom</dt><dd>{{ pedido.codigoCupom || 'Nenhum' }}</dd></div>
+                        </dl>
+                      </section>
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          }
+        </section>
+      }
+    }
   </main>
 </div>
+
+
+
+
+
+
+
